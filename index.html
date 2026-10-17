@@ -84,6 +84,11 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
 .ctl.ghost{background:transparent;color:var(--head)}
 .hint{margin:14px 0 0;padding:8px 14px;border-left:3px solid var(--eyebrow);background:var(--strip-bg);font-style:italic;font-size:14.5px;color:var(--ink-2)}
 
+/* Problem Set 5: my own agent */
+.ps5{margin-top:22px}
+.ps5 h2{font-size:clamp(20px,2.4vw,26px);font-weight:800;line-height:1.2;color:var(--head);margin:12px 0 12px;text-wrap:balance}
+.agentcard{margin:0;padding:14px 16px;background:var(--strip-bg);border-radius:6px;font:500 15px/1.6 var(--mono);color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+
 @media (max-width:760px){
   body{padding-top:20px}
   .map{grid-template-columns:1fr}
@@ -147,6 +152,17 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
       <button type="button" class="ctl ghost" id="clear">Clear</button>
     </div>
     <p class="hint">Click a task card to place it, or Show all. Tasks are each member’s own; the placements are for discussion.</p>
+  </section>
+
+  <section class="card ps5" aria-labelledby="ps5-card">
+    <p class="eyebrow">Problem Set 5 · AK</p>
+    <h2 id="ps5-card">My agent card</h2>
+    <pre class="agentcard">My agent card | Daily Settlement Logger | finished [DATE AND TIME SGT]
+1. The job: After each trading day, it records that day's settlement (positions closed, wins and losses, net P/L, deposits and withdrawals, opening and closing balance) as one row in a Google Sheet, for a retail trader (me) who reviews performance.
+2. The trigger: A new email in my Gmail sent to my +settle address with "Daily Settlement" in the subject, which my MT5 trading terminal sends when I run its DailySettlement script for a day.
+3. The tools: Gmail, New Email Matching Search (the trigger, read only); Google Sheets, Create Spreadsheet Row (one sheet). Outside Zapier, the MT5 script only reads the account history and sends one email.
+4. It must never: Act on the trading account. The Zap is connected only to Gmail and one Google Sheet, and the MT5 script contains no order functions.
+5. Where a person checks: I read the new row the morning after each trading day, and once a week I compare one day's row with the MT5 History tab.</pre>
   </section>
 </main>
 
