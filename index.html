@@ -90,6 +90,13 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
 .agentcard{margin:0;padding:14px 16px;background:var(--strip-bg);border-radius:6px;font:500 15px/1.6 var(--mono);color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
 .ps5 p{margin:0 0 10px;max-width:75ch}
 .ps5 blockquote{margin:0 0 10px;padding:8px 14px;border-left:3px solid var(--eyebrow);background:var(--strip-bg);max-width:75ch}
+.ps5 h3{font-size:18px;font-weight:800;line-height:1.3;color:var(--head);margin:22px 0 8px}
+.ps5 ul{margin:0 0 10px;padding-left:20px;max-width:75ch}
+.ps5 li{margin-bottom:4px}
+.ps5 figure{margin:0 0 16px}
+.ps5 figure img{display:block;max-width:100%;height:auto;border:1px solid var(--rule);border-radius:6px;background:#fff}
+.ps5 figcaption{font-size:14px;color:var(--ink-2);margin-top:6px}
+.ps5 .agentcard + p{margin-top:10px}
 
 @media (max-width:760px){
   body{padding-top:20px}
@@ -173,6 +180,42 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
     <p>The test: run the MT5 script for 16 Oct a second time, as could happen by accident in daily use. 16 Oct was already logged once, at 17:19 SGT.</p>
     <p><strong>My prediction, recorded on Sun 18 Oct 2026 at 17:55 SGT, before the run:</strong></p>
     <blockquote>I expect nothing to go wrong. Settling 16 Oct a second time should leave the agent and the sheet working normally.</blockquote>
+
+    <h3>What happened (Sun 18 Oct, 17:58 SGT)</h3>
+    <p>The Zap itself worked: Zap history shows a successful run, and Log gained a second 16 Oct row. The sheet did not: the Settlement tab showed 16 Oct twice.</p>
+    <ul>
+      <li><strong>P/L since first row</strong> counted the +440.93 twice: 468.40 instead of 27.47.</li>
+      <li><strong>Balance check</strong> marked the duplicate row CHECK, because its opening balance (1864.14) is not the previous row's closing balance (2305.07). But the word was in very faint grey and easy to miss.</li>
+      <li><strong>Total P/L</strong> stayed right at 1305.07, because it is worked out from the balance.</li>
+    </ul>
+    <p>So my prediction was wrong. The agent did its job; the sheet assumed each day arrives only once.</p>
+    <figure>
+      <a href="img/tricky-1-settlement-duplicate.webp"><img src="img/tricky-1-settlement-duplicate.webp" width="1867" height="165" loading="lazy" alt="Settlement tab with two rows for 16 Oct; P/L since first row reads 468.4 on the second one and Balance check shows a faint CHECK"></a>
+      <figcaption>Settlement after the second 16 Oct email: the duplicate row, 468.4, and the faint CHECK.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/tricky-2-log-duplicate.webp"><img src="img/tricky-2-log-duplicate.webp" width="1538" height="950" loading="lazy" alt="Log tab with two identical 16 Oct emails, received at 17:19:15 and 17:58:01"></a>
+      <figcaption>Log keeps both 16 Oct emails (17:19 and 17:58), as it should.</figcaption>
+    </figure>
+
+    <h3>The fix</h3>
+    <p>A free-plan Zap cannot look for an existing row before adding one (that takes a second step), and Log should keep every email as the full record. So the fix is in the Settlement tab: its formula now sorts the days by date and keeps one row per day. I also made CHECK show in bold red. Claude wrote the new formula; I applied it in the sheet and tested it.</p>
+    <pre class="agentcard">=SORTN(ARRAYFORMULA(IFERROR(SPLIT(REGEXEXTRACT(FILTER(Log!C2:C,Log!C2:C&lt;&gt;""),"CSV: ([^\r\n]+)"),";"),"no CSV line")),9^9,2,1,TRUE)</pre>
+
+    <h3>Rerun (18:02 SGT)</h3>
+    <p>I settled 16 Oct a third time. Zap history shows another successful run and Log now holds three 16 Oct rows, but Settlement lists 16 Oct once: P/L since first row is back to 27.47, Balance check reads OK on every row, and Total P/L is 1305.07.</p>
+    <figure>
+      <a href="img/tricky-3-zap-history.webp"><img src="img/tricky-3-zap-history.webp" width="1558" height="715" loading="lazy" alt="Zap history with five successful Daily Settlement Logger runs on 18 Oct 2026, from 5:13 pm to 6:02 pm"></a>
+      <figcaption>Zap history: the three runs (17:13, 17:14, 17:21), the tricky case (17:58) and the rerun after the fix (18:02).</figcaption>
+    </figure>
+    <figure>
+      <a href="img/tricky-4-log-third-copy.webp"><img src="img/tricky-4-log-third-copy.webp" width="1067" height="870" loading="lazy" alt="Log tab with three identical 16 Oct emails, the last received at 18:01:59"></a>
+      <figcaption>Log after the rerun: three copies of 16 Oct.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/tricky-5-settlement-fixed.webp"><img src="img/tricky-5-settlement-fixed.webp" width="1867" height="140" loading="lazy" alt="Settlement tab with one row each for 14, 15 and 16 Oct; P/L since first row 27.47 and Balance check OK"></a>
+      <figcaption>Settlement after the fix: one row per day, 27.47, and OK on every row.</figcaption>
+    </figure>
   </section>
 </main>
 
