@@ -80,6 +80,8 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
 .chip{border:0;background:var(--c);color:var(--chip-ink);box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
 .chip[aria-pressed="true"]::before{content:"✓ ";font-weight:800}
 .chip:hover{filter:brightness(1.08)}
+.chip.ps5chip{outline:2px dashed var(--head);outline-offset:2px}
+.item.ps5item{font-weight:700}
 .ctl{border:1.5px solid var(--head);background:var(--head);color:var(--paper)}
 .ctl.ghost{background:transparent;color:var(--head)}
 .hint{margin:14px 0 0;padding:8px 14px;border-left:3px solid var(--eyebrow);background:var(--strip-bg);font-style:italic;font-size:14.5px;color:var(--ink-2)}
@@ -125,7 +127,7 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
         <li style="--c:var(--m-ikd)"><span class="dot"></span>IKD</li>
         <li style="--c:var(--m-mml)"><span class="dot"></span>MML</li>
       </ul>
-      <span class="count" id="count" aria-live="polite">0 of 7 placed</span>
+      <span class="count" id="count" aria-live="polite">0 of 8 placed</span>
     </div>
 
     <div class="map">
@@ -160,7 +162,7 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
       <button type="button" class="ctl" id="showAll">Show all</button>
       <button type="button" class="ctl ghost" id="clear">Clear</button>
     </div>
-    <p class="hint">Click a task card to place it, or Show all. Tasks are each member’s own; the placements are for discussion.</p>
+    <p class="hint">Click a task card to place it, or Show all. Tasks are each member’s own; the placements are for discussion. My Problem Set 5 agent (PS5, dashed outline) is placed already.</p>
   </section>
 
   <section class="card ps5" aria-labelledby="ps5-card">
@@ -228,6 +230,7 @@ const QUADS = {
 };
 
 // Trigger, action and oversight are each member's words, verbatim.
+// The last entry (PS5) is my own Problem Set 5 agent, drafted with Claude.
 const TASKS = [
   { member: "AK", tag: "Careers", short: "Tailor and send job applications", quadrant: "agents",
     industry: "Human Resources / Personal Career Development",
@@ -263,7 +266,12 @@ const TASKS = [
     industry: "Consulting",
     trigger: "A client brief asks whether a market is worth entering",
     action: "Builds top-down and bottom-up estimates, pulls sources and runs scenarios.",
-    oversight: "" }
+    oversight: "" },
+  { member: "AK", tag: "PS5", short: "Daily settlement logger", quadrant: "alone", ps5: true,
+    industry: "Finance (record-keeping for my own trading account)",
+    trigger: "My MT5 trading terminal emails one day's settlement to my +settle address when I run its DailySettlement script for that day.",
+    action: "The Zap adds the email as a row in a Google Sheet; the sheet turns it into one row per day with net P/L, deposits and withdrawals, balances, a running total and a balance check.",
+    oversight: "I read the new row the morning after each trading day, and once a week I compare one day with the MT5 History tab. The balance check marks a row CHECK in bold red when it does not reconcile." }
 ];
 
 const color = m => `var(--m-${m.toLowerCase()})`;
@@ -303,7 +311,7 @@ function place(i, animate = true) {
   if (placed.has(i)) return;
   placed.add(i);
   const t = TASKS[i];
-  const btn = el("button", { type: "button", className: "item" + (animate ? " new" : "") },
+  const btn = el("button", { type: "button", className: "item" + (animate ? " new" : "") + (t.ps5 ? " ps5item" : "") },
     el("span", { className: "dot" }),
     el("span", {}, label(t), el("span", { className: "who", textContent: t.member })));
   btn.dataset.i = i;
@@ -315,7 +323,7 @@ function place(i, animate = true) {
 }
 
 TASKS.forEach((t, i) => {
-  const c = el("button", { type: "button", className: "chip", textContent: label(t) });
+  const c = el("button", { type: "button", className: "chip" + (t.ps5 ? " ps5chip" : ""), textContent: label(t) });
   c.style.setProperty("--c", color(t.member));
   c.setAttribute("aria-pressed", "false");
   c.setAttribute("aria-label", `${t.member}: ${label(t)}`);
@@ -339,6 +347,11 @@ $("#clear").addEventListener("click", () => {
 });
 
 idle();
+
+// Problem Set 5: my own agent is on the map from the start
+const mine = TASKS.findIndex(t => t.ps5);
+place(mine, false);
+select(mine);
 </script>
 </body>
 </html>
