@@ -98,6 +98,11 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
 .ps5 figure{margin:0 0 16px}
 .ps5 figure img{display:block;max-width:100%;height:auto;border:1px solid var(--rule);border-radius:6px;background:#fff}
 .ps5 figcaption{font-size:14px;color:var(--ink-2);margin-top:6px}
+.ps5 .tablewrap{overflow-x:auto;margin:0 0 12px}
+.ps5 table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+.ps5 th,.ps5 td{border-bottom:1px solid var(--rule);padding:7px 8px;text-align:left;vertical-align:top}
+.ps5 th{color:var(--ink-2);font-weight:700}
+.ps5 td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
 .ps5 .agentcard + p{margin-top:10px}
 
 @media (max-width:760px){
@@ -199,6 +204,33 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
 5. Where a person checks: I read the new row the morning after each trading day, and once a week I compare one day's row with the MT5 History tab.</pre>
   </section>
 
+  <section class="card ps5" aria-labelledby="ps5-runs">
+    <p class="eyebrow">Problem Set 5 · Step 2</p>
+    <h2 id="ps5-runs">Three runs, each checked</h2>
+    <p>After publishing the Zap, I ran the MT5 script for three trading days, one after another. Each email started one run, and each run added one row to Log.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Run</th><th>Day settled</th><th>Email sent (SGT)</th><th>Zap ran</th><th>Delay</th><th>What it recorded</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="n">Wed 14 Oct</td><td class="n">17:13:24</td><td class="n">17:13:37</td><td class="n">13 s</td><td>52 positions (48 won, 4 lost); net P/L +1349.35; withdrawal −600.00; balance 2877.60 → 3626.95</td></tr>
+          <tr><td>2</td><td class="n">Thu 15 Oct</td><td class="n">17:14:26</td><td class="n">17:14:50</td><td class="n">24 s</td><td>64 positions (29 won, 35 lost); net P/L −1762.81; balance 3626.95 → 1864.14</td></tr>
+          <tr><td>3</td><td class="n">Fri 16 Oct</td><td class="n">17:19:15</td><td class="n">17:21:14</td><td class="n">1 min 59 s</td><td>38 positions (31 won, 5 lost, 2 flat); net P/L +440.93; balance 1864.14 → 2305.07</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>How each run was checked.</strong> For each run, Zap history shows the email the trigger received and the row the action wrote; they match word for word, and all three runs are marked successful. The figures were also checked against my MT5 account history with a separate read-only query (run by Claude), and every number matched to the cent. In the sheet, each day's opening balance equals the previous day's closing balance.</p>
+    <p><strong>Setup notes, to match Zap history.</strong> Before publishing, I sent one sample email (Sat 17 Oct, a day with no trades) to test the trigger; the test row it made was deleted later, which is why Zap history shows the runs writing to rows 3, 4 and 4. I also sent one email with a mistyped year (2006-10-16 instead of 2026-10-16); Zap history has no run for it, and I sent 16 Oct again correctly at 17:19. The two later runs (17:58 and 18:02) are the tricky case below.</p>
+    <figure>
+      <a href="img/runs-1-settlement.webp"><img src="img/runs-1-settlement.webp" width="1922" height="145" loading="lazy" alt="Settlement tab after the three runs: one row each for 14, 15 and 16 Oct, Balance check OK, Total P/L 2626.95, 864.14 and 1305.07"></a>
+      <figcaption>Settlement after the three runs: one row per day, and the balances reconcile.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/runs-2-log.webp"><img src="img/runs-2-log.webp" width="1633" height="1187" loading="lazy" alt="Log tab with the three settlement emails for 14, 15 and 16 Oct, received at 17:13:24, 17:14:26 and 17:19:15"></a>
+      <figcaption>Log: the three emails exactly as the Zap wrote them.</figcaption>
+    </figure>
+    <p>The Zap history list for all five runs is the first screenshot under "Rerun" below.</p>
+  </section>
+
   <section class="card ps5" aria-labelledby="ps5-tricky">
     <p class="eyebrow">Problem Set 5 · Step 2</p>
     <h2 id="ps5-tricky">Tricky case: settling the same day twice</h2>
@@ -241,6 +273,34 @@ h1{font-size:clamp(24px,3.2vw,34px);font-weight:800;line-height:1.15;color:var(-
       <a href="img/tricky-5-settlement-fixed.webp"><img src="img/tricky-5-settlement-fixed.webp" width="1867" height="140" loading="lazy" alt="Settlement tab with one row each for 14, 15 and 16 Oct; P/L since first row 27.47 and Balance check OK"></a>
       <figcaption>Settlement after the fix: one row per day, 27.47, and OK on every row.</figcaption>
     </figure>
+  </section>
+
+  <section class="card ps5" aria-labelledby="ps5-log">
+    <p class="eyebrow">Problem Set 5 · Step 3</p>
+    <h2 id="ps5-log">Collaboration log</h2>
+    <h3>What I delegated to AI (Claude, in Claude Code)</h3>
+    <ul>
+      <li>Brainstorming agent ideas. I chose the daily settlement logger and its quadrant.</li>
+      <li>Writing and compiling the read-only MT5 script that emails one day's settlement, and the Google Sheet formulas, including the duplicate fix.</li>
+      <li>Building this page from the group's map: the card layout, the new sections, the cropped screenshots, and removing my email address, home IP, computer name and Sheet ID from the Zap history file.</li>
+      <li>Putting my Q1 points into English. Claude also suggested the two placements in Q1 (d), which I adopted, and drafted this log and the reflection from our session at my request.</li>
+    </ul>
+    <h3>What I checked, and how</h3>
+    <ul>
+      <li>I previewed the script's output before sending any email, and Claude cross-checked it against my account history with a separate read-only query: the numbers matched to the cent.</li>
+      <li>I compared the sheet with my own account figures, and the runs with Zap history.</li>
+      <li>I wrote my tricky-case prediction and committed it before running the test.</li>
+    </ul>
+    <h3>One AI error I caught</h3>
+    <p>Claude's first running-total column, labelled "Cumulative P/L", only added up the days in the sheet: +27.47 by 16 Oct. My account's total P/L was +1305.07, and I noticed the gap. Claude confirmed it from the history (closing balance 2305.07 minus net deposits of 1000.00), renamed the column "P/L since first row" and added a Total P/L column worked out from the balance.</p>
+    <h3>Time and cost</h3>
+    <p>About 3 hours of hands-on work on Sun 18 Oct (roughly 00:45–01:30 and 16:30–18:45 SGT), plus choosing the agent on Sat 17 Oct. Cost: nothing extra. I used Zapier's free plan, Google Sheets and the Claude Code I already use.</p>
+  </section>
+
+  <section class="card ps5" aria-labelledby="ps5-reflection">
+    <p class="eyebrow">Problem Set 5 · Step 3</p>
+    <h2 id="ps5-reflection">Reflection</h2>
+    <p>My agent fitted the job well: settling a trading day is work with a right answer, and in five runs it logged every figure to the cent within two minutes, with no help from me. It failed when the same day arrived twice, which I had predicted would cause no problem: the sheet doubled the running P/L and flagged it only in faint grey. I would have the script send each day's email by itself after the close, refuse impossible dates like the 2006 typo I made, and include net deposits to date so that no number in the sheet has to be typed in by hand.</p>
   </section>
 </main>
 
